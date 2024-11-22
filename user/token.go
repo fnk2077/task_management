@@ -9,7 +9,7 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-const ExpireCount = 2
+const ExpireCount = 1
 const ExpireRefreshCount = 168
 
 type JwtCustomClaims struct {

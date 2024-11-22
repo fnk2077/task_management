@@ -8,7 +8,9 @@ import (
 	"os/signal"
 	"time"
 
+	"assignment_task/middleware"
 	"assignment_task/postgres"
+	"assignment_task/task"
 	"assignment_task/user"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -19,11 +21,16 @@ func main() {
 
 	p := postgres.New()
 	userHandler := user.New(p)
+	taskHander := task.New(p)
+
 	e := echo.New()
 
 	r := e.Group("/api/v1")
+	r.Use(middleware.AuthMiddleware)
 	r.POST("/register", userHandler.Register)
 	r.POST("/login", userHandler.Login)
+
+	r.POST("/task", taskHander.CraeteTask)
 
 	go func() {
 		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {

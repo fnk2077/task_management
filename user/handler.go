@@ -6,6 +6,7 @@ import (
 	"assignment_task/requests"
 	"assignment_task/responses"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -57,7 +58,6 @@ func (h *Handler) Register(c echo.Context) error {
 
 func (h Handler) Login(c echo.Context) error {
 	loginRequest := new(requests.LoginRequest)
-
 	if err := c.Bind(loginRequest); err != nil {
 		return err
 	}
@@ -78,5 +78,14 @@ func (h Handler) Login(c echo.Context) error {
 	}
 	res := responses.NewLoginResponse(accessToken, refreshToken, exp)
 
+	c.SetCookie(&http.Cookie{
+			Name:     "jwt_token",
+			Value:    accessToken,
+			Expires:  time.Unix(exp, 0),
+			HttpOnly: true, 
+			Path:     "/",  
+	})
+
+	
 	return responses.Response(c, http.StatusOK, res)
 }
