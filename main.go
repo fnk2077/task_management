@@ -1,33 +1,43 @@
 package main
 
 import (
-	"log"
-	"world-skill-tree/config"
-	_ "world-skill-tree/docs"
-	"world-skill-tree/server"
-	"world-skill-tree/server/routes"
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
+
+	"assignment_task/postgres"
+	"assignment_task/user"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	// echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 func main() {
-	cfg := config.NewConfig()
 
-	// docs.SwaggerInfo.Host = fmt.Sprintf("%s:%s", cfg.HTTP.Host, cfg.HTTP.Port)
+	p := postgres.New()
+	userHandler := user.New(p)
+	e := echo.New()
 
-	app := server.NewServer(cfg)
+	r := e.Group("/api/v1")
+	r.POST("/register", userHandler.Register)
+	r.POST("/login", userHandler.Login)
 
-	app.Echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
-	  }))
-	routes.ConfigureRoutes(app)
+	go func() {
+		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {
+			e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+		}
+	}()
 
-	err := app.Start(cfg.HTTP.Port)
-	if err != nil {
-		log.Fatal("Port already used")
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt)
+	<-shutdown
+	fmt.Println("shutting down the server")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := e.Shutdown(ctx); err != nil {
+		e.Logger.Fatal(err)
 	}
 }

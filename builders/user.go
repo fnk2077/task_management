@@ -1,6 +1,6 @@
 package builders
 
-import "world-skill-tree/models"
+import "assignment_task/models"
 
 type UserBuilder struct {
 	email    string
