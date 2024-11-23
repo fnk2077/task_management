@@ -16,11 +16,11 @@
           </li>
           <li>
             <RouterLink
-              to="/about"
+              to="/task"
               class="hover:text-blue-200 transition duration-300"
               active-class="font-semibold underline"
             >
-              About
+              Task
             </RouterLink>
           </li>
           <li>
@@ -30,6 +30,15 @@
               active-class="font-semibold underline"
             >
               Login
+            </RouterLink>
+          </li>
+          <li>
+            <RouterLink
+              to="/register"
+              class="hover:text-blue-200 transition duration-300"
+              active-class="font-semibold underline"
+            >
+              Register
             </RouterLink>
           </li>
         </ul>

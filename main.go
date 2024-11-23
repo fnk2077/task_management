@@ -25,12 +25,19 @@ func main() {
 
 	e := echo.New()
 
-	r := e.Group("/api/v1")
-	r.Use(middleware.AuthMiddleware)
-	r.POST("/register", userHandler.Register)
-	r.POST("/login", userHandler.Login)
+	{
+		r := e.Group("/api/v1")
+		r.POST("/register", userHandler.Register)
+		r.POST("/login", userHandler.Login)
+	}
 
-	r.POST("/task", taskHander.CraeteTask)
+	{
+		r := e.Group("/api/v1")
+		r.Use(middleware.AuthMiddleware)
+		r.GET("/task", taskHander.GetAllTask)
+		r.POST("/task", taskHander.CraeteTask)
+	}
+
 
 	go func() {
 		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {

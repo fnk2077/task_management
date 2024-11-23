@@ -20,6 +20,7 @@ type Handler struct {
 
 type Storer interface {
 	CreateTask(models.Task) error
+	GetAllTask() (*[]models.Task, error)
 }
 
 func (h *Handler) CraeteTask(c echo.Context) error {
@@ -41,5 +42,15 @@ func (h *Handler) CraeteTask(c echo.Context) error {
 	h.store.CreateTask(newTask)
 
 	return responses.MessageResponse(c, http.StatusCreated, "Task successfully created")
+}
+
+func (h *Handler) GetAllTask(c echo.Context) error {
+
+	res, err := h.store.GetAllTask()
+	if err != nil {
+		return err
+	}
+
+	return responses.Response(c, http.StatusOK, res)
 }
 

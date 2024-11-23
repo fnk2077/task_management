@@ -26,6 +26,15 @@ func (p *Postgres) DeleteTask(taskID int) error {
 	return nil
 }
 
+func (p *Postgres) GetAllTask() (*[]models.Task, error) {
+	var tasks []models.Task
+	if err := p.Db.Find(&tasks).Error; err != nil {
+		return nil, err
+	}
+	return &tasks, nil
+}
+
+
 func (p *Postgres) GetTaskByEmail(email string) (*models.Task, error) {
 	var task models.Task
 	p.Db.Where("email = ?", email).First(&task)
