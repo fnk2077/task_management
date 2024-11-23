@@ -2,7 +2,6 @@
   <div class="p-6 bg-gray-100 min-h-screen">
     <h1 class="text-3xl font-bold text-blue-600 mb-6">Task List</h1>
 
-    <!-- ปุ่มสำหรับสร้าง Task -->
     <div class="mb-4">
       <button
         @click="openCreateModal"
@@ -12,7 +11,6 @@
       </button>
     </div>
 
-    <!-- ตารางแสดง Task -->
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
       <table class="min-w-full table-auto border-collapse border border-gray-200">
         <thead class="bg-blue-600 text-white">
@@ -58,7 +56,8 @@
                 Edit
               </button>
               <button
-                @click="deleteTask(task.ID)"
+                v-if="userEmail === task.created_by"
+                @click="confirmDelete(task.ID)"
                 class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
               >
                 Delete
@@ -69,7 +68,6 @@
       </table>
     </div>
 
-    <!-- Modal สำหรับดูรายละเอียด Task -->
     <div
       v-if="showViewModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
@@ -96,7 +94,6 @@
       </div>
     </div>
 
-    <!-- Modal สำหรับสร้างหรือแก้ไข Task -->
     <div
       v-if="showCreateModal || showEditModal"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
@@ -187,33 +184,13 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
-      tasks: [
-        {
-          ID: 1,
-          title: "Test Task 1",
-          description: "Description for Task 1",
-          status: "Pending",
-          priority: "Medium",
-          assigned_to: "a1@a.com",
-          created_by: "a2@a.com",
-          CreatedAt: "2024-11-23T09:34:05.122976+07:00",
-          due_date: "2024-12-01T09:34:05.122976+07:00",
-        },
-        {
-          ID: 2,
-          title: "Test Task 2",
-          description: "Description for Task 2",
-          status: "In Progress",
-          priority: "High",
-          assigned_to: "a3@a.com",
-          created_by: "a4@a.com",
-          CreatedAt: "2024-11-23T10:00:00.122976+07:00",
-          due_date: "2024-12-03T09:00:00.122976+07:00",
-        },
-      ],
+      userEmail: localStorage.getItem("email"),
+      tasks: [],
       taskForm: {
         ID: null,
         title: "",
@@ -230,7 +207,19 @@ export default {
       viewTask: null,
     };
   },
+  created() {
+    this.fetchTasks();
+  },
   methods: {
+    async fetchTasks() {
+      const email = this.userEmail
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/task?email=${email}`);
+        this.tasks = response.data;
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    },
     formatDate(date) {
       const newDate = new Date(date);
       return newDate.toLocaleDateString("en-GB", {
@@ -263,19 +252,13 @@ export default {
     },
     closeCreateModal() {
       this.showCreateModal = false;
-      // รีเซ็ตข้อมูลฟอร์ม
-      this.taskForm = {
-        title: "",
-        description: "",
-        status: "Pending",
-        priority: "Low",
-        assigned_to: "",
-        due_date: "",
-      };
+      this.resetForm();
     },
     closeEditModal() {
       this.showEditModal = false;
-      // รีเซ็ตข้อมูลฟอร์ม
+      this.resetForm();
+    },
+    resetForm() {
       this.taskForm = {
         title: "",
         description: "",
@@ -286,27 +269,77 @@ export default {
       };
     },
     createTask() {
-      const newTask = {
-        ...this.taskForm,
-        ID: this.tasks.length + 1,
-        CreatedAt: new Date().toISOString(),
+      const userEmail = localStorage.getItem("email");
+      const taskData = {
+        title: this.taskForm.title,
+        description: this.taskForm.description,
+        status: this.taskForm.status,
+        priority: this.taskForm.priority,
+        assigned_to: this.taskForm.assigned_to,
+        created_by: userEmail,
+        due_date: new Date(this.taskForm.due_date).toISOString(),
       };
-      this.tasks.push(newTask);
-      this.closeCreateModal();
+
+      axios
+        .post("http://localhost:8080/api/v1/task", taskData)
+        .then(() => {
+          alert("Task ถูกสร้างเรียบร้อยแล้ว");
+          this.fetchTasks();
+          this.closeCreateModal();
+        })
+        .catch((error) => {
+          console.error("Error creating task:", error);
+          alert("เกิดข้อผิดพลาดในการสร้าง Task");
+        });
     },
     updateTask() {
-      const index = this.tasks.findIndex((task) => task.ID === this.taskForm.ID);
-      if (index !== -1) {
-        this.tasks[index] = { ...this.taskForm };
-      }
-      this.showEditModal = false;
+      const updatedTask = {
+        id: this.taskForm.ID,
+        title: this.taskForm.title,
+        description: this.taskForm.description,
+        status: this.taskForm.status,
+        assigned_to: this.taskForm.assigned_to,
+        created_by: this.taskForm.created_by,
+        due_date: new Date(this.taskForm.due_date).toISOString(),
+      };
+
+      axios
+        .put("http://localhost:8080/api/v1/task", updatedTask)
+        .then(() => {
+          alert("Task ถูกอัปเดตเรียบร้อยแล้ว");
+          this.fetchTasks();
+          this.closeEditModal();
+        })
+        .catch((error) => {
+          console.error("Error updating task:", error);
+          alert("เกิดข้อผิดพลาดในการอัปเดต Task");
+        });
     },
-    deleteTask(ID) {
-      this.tasks = this.tasks.filter((task) => task.ID !== ID);
+    confirmDelete(ID) {
+      const confirmed = window.confirm(`คุณต้องการลบ Task ID ${ID} ใช่หรือไม่?`);
+      if (confirmed) {
+        this.deleteTask(ID);
+      }
+    },
+    async deleteTask(ID) {
+      try {
+
+        await axios.delete("http://localhost:8080/api/v1/task", {
+          data: { id: ID },
+        });
+        
+        this.tasks = this.tasks.filter((task) => task.ID !== ID);
+
+        alert(`Task ID ${ID} ถูกลบเรียบร้อยแล้ว`);
+      } catch (error) {
+        console.error("Error deleting task:", error);
+        alert("เกิดข้อผิดพลาดในการลบ Task");
+      }
     },
   },
 };
 </script>
+
 
 <style scoped>
 .table-auto {

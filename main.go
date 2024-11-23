@@ -8,10 +8,11 @@ import (
 	"os/signal"
 	"time"
 
-	"assignment_task/middleware"
 	"assignment_task/postgres"
 	"assignment_task/task"
 	"assignment_task/user"
+
+	"github.com/labstack/echo/v4/middleware"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/labstack/echo/v4"
@@ -24,22 +25,22 @@ func main() {
 	taskHander := task.New(p)
 
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowMethods: []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAuthorization},
+	}))
 
 	{
 		r := e.Group("/api/v1")
 		r.POST("/register", userHandler.Register)
 		r.POST("/login", userHandler.Login)
-	}
 
-	{
-		r := e.Group("/api/v1")
-		r.Use(middleware.AuthMiddleware)
-		r.GET("/task", taskHander.GetAllTask)
+		r.GET("/task", taskHander.GetTask)
 		r.POST("/task", taskHander.CraeteTask)
 		r.PUT("/task", taskHander.UpdateTask)
 		r.DELETE("/task", taskHander.DeleteTaskByID)
 	}
-
 
 	go func() {
 		if err := e.Start(":" + os.Getenv("PORT")); err != nil && err != http.ErrServerClosed {

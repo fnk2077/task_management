@@ -35,8 +35,11 @@ func (p *Postgres) GetAllTask() (*[]models.Task, error) {
 }
 
 
-func (p *Postgres) GetTaskByEmail(email string) (*models.Task, error) {
-	var task models.Task
-	p.Db.Where("email = ?", email).First(&task)
-	return &task, nil
+func (p *Postgres) GetTaskByEmail(email string) (*[]models.Task, error) {
+	var tasks []models.Task
+	if err := p.Db.Where("created_by = ?", email).Find(&tasks).Error; err != nil {
+		return nil, err
+	}
+	return &tasks, nil
 }
+
