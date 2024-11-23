@@ -36,6 +36,8 @@ func main() {
 		r.Use(middleware.AuthMiddleware)
 		r.GET("/task", taskHander.GetAllTask)
 		r.POST("/task", taskHander.CraeteTask)
+		r.PUT("/task", taskHander.UpdateTask)
+		r.DELETE("/task", taskHander.DeleteTaskByID)
 	}
 
 

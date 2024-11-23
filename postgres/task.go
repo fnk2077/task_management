@@ -12,14 +12,14 @@ func (p *Postgres) CreateTask(task models.Task) error {
 	return nil
 }
 
-func (p *Postgres) EditTask(task models.Task) error {
+func (p *Postgres) UpdateTask(task models.Task) error {
 	if err := p.Db.Model(&models.Task{}).Where("id = ?", task.ID).Updates(&task).Error; err != nil {
 		return fmt.Errorf("failed to update task: %w", err)
 	}
 	return nil
 }
 
-func (p *Postgres) DeleteTask(taskID int) error {
+func (p *Postgres) DeleteTaskByID(taskID int) error {
 	if err := p.Db.Delete(&models.Task{}, taskID).Error; err != nil {
 		return fmt.Errorf("failed to delete task: %w", err)
 	}

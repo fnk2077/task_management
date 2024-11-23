@@ -168,7 +168,7 @@
           </div>
           <div class="flex justify-between mt-4">
             <button
-              @click="closeCreateModal"
+              @click="cancelAction"
               class="bg-gray-300 text-gray-700 px-4 py-2 rounded"
             >
               Cancel
@@ -254,8 +254,28 @@ export default {
       this.taskForm = { ...task };
       this.showEditModal = true;
     },
+    cancelAction() {
+      if (this.showCreateModal) {
+        this.closeCreateModal();
+      } else if (this.showEditModal) {
+        this.closeEditModal();
+      }
+    },
     closeCreateModal() {
       this.showCreateModal = false;
+      // รีเซ็ตข้อมูลฟอร์ม
+      this.taskForm = {
+        title: "",
+        description: "",
+        status: "Pending",
+        priority: "Low",
+        assigned_to: "",
+        due_date: "",
+      };
+    },
+    closeEditModal() {
+      this.showEditModal = false;
+      // รีเซ็ตข้อมูลฟอร์ม
       this.taskForm = {
         title: "",
         description: "",
