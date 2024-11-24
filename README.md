@@ -18,3 +18,13 @@
    npm run dev
    ```
 5.ไปที่ URL http://localhost:5173 เพื่อดูหน้าเว็บที่รันอยู่
+
+รหัสสำหรับเริ่มต้น
+```bash
+email: a1@a.com
+password: 1
+```
+```bash
+email: test01@a.com
+password: 1234
+```
