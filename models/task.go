@@ -12,7 +12,7 @@ type Task struct {
 	Description string    `json:"description" gorm:"type:text"`
 	Status      string    `json:"status" gorm:"type:varchar(50);default:'Pending'" `
 	Priority    string    `json:"priority" gorm:"type:varchar(50);default:'Medium'"`
-	DueDate     time.Time `json:"due_date"`
-	AssignedTo  string    `json:"assigned_to" gorm:"type:varchar(200);not null"`
-	CreatedBy   string    `json:"created_by" gorm:"type:varchar(200);not null"`
+	DueDate     time.Time `json:"dueDate"`
+	AssignedTo  string    `json:"assignedTo" gorm:"type:varchar(200);not null"`
+	CreatedBy   string    `json:"createdBy" gorm:"type:varchar(200);not null"`
 }

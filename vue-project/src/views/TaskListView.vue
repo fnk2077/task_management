@@ -29,10 +29,10 @@
               <td class="px-4 py-2 border truncate max-w-xs">{{ task.description }}</td>
               <td class="px-4 py-2 border">{{ task.status }}</td>
               <td class="px-4 py-2 border">{{ task.priority }}</td>
-              <td class="px-4 py-2 border">{{ task.assigned_to }}</td>
-              <td class="px-4 py-2 border">{{ task.created_by }}</td>
+              <td class="px-4 py-2 border">{{ task.assignedTo }}</td>
+              <td class="px-4 py-2 border">{{ task.createdBy }}</td>
               <td class="px-4 py-2 border">{{ formatDate(task.CreatedAt) }}</td>
-              <td class="px-4 py-2 border">{{ formatDate(task.due_date) }}</td>
+              <td class="px-4 py-2 border">{{ formatDate(task.dueDate) }}</td>
               <td class="px-4 py-2 border text-center">
                 <button
                   @click="openViewModal(task)"
@@ -57,10 +57,10 @@
           <p><strong>Description:</strong> {{ viewTask.description }}</p>
           <p><strong>Status:</strong> {{ viewTask.status }}</p>
           <p><strong>Priority:</strong> {{ viewTask.priority }}</p>
-          <p><strong>Assigned To:</strong> {{ viewTask.assigned_to }}</p>
-          <p><strong>Created By:</strong> {{ viewTask.created_by }}</p>
+          <p><strong>Assigned To:</strong> {{ viewTask.assignedTo }}</p>
+          <p><strong>Created By:</strong> {{ viewTask.createdBy }}</p>
           <p><strong>Created At:</strong> {{ formatDate(viewTask.CreatedAt) }}</p>
-          <p><strong>Due Date:</strong> {{ formatDate(viewTask.due_date) }}</p>
+          <p><strong>Due Date:</strong> {{ formatDate(viewTask.dueDate) }}</p>
           <div class="flex justify-end mt-4">
             <button
               @click="closeViewModal"

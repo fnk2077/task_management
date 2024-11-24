@@ -9,9 +9,9 @@ type CreateTaskRequest struct {
 	Description string    `json:"description"`
 	Status      string    `json:"status"`
 	Priority    string    `json:"priority"`
-	DueDate     time.Time `json:"due_date"`
-	AssignedTo  string    `json:"assigned_to"`
-	CreatedBy   string    `json:"created_by"`
+	DueDate     time.Time `json:"dueDate"`
+	AssignedTo  string    `json:"assignedTo"`
+	CreatedBy   string    `json:"createdBy"`
 }
 
 type DeleteTaskRequest struct {
@@ -24,7 +24,7 @@ type UpdateTaskRequest struct {
 	Description string    `json:"description"`
 	Status      string    `json:"status"`
 	Priority    string    `json:"priority"`
-	DueDate     time.Time `json:"due_date"`
-	AssignedTo  string    `json:"assigned_to"`
-	CreatedBy   string    `json:"created_by"`
+	DueDate     time.Time `json:"dueDate"`
+	AssignedTo  string    `json:"assignedTo"`
+	CreatedBy   string    `json:"createdBy"`
 }

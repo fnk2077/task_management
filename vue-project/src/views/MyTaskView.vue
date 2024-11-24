@@ -38,10 +38,10 @@
             <td class="px-4 py-2 border truncate max-w-xs">{{ task.description }}</td>
             <td class="px-4 py-2 border">{{ task.status }}</td>
             <td class="px-4 py-2 border">{{ task.priority }}</td>
-            <td class="px-4 py-2 border">{{ task.assigned_to }}</td>
-            <td class="px-4 py-2 border">{{ task.created_by }}</td>
+            <td class="px-4 py-2 border">{{ task.assignedTo }}</td>
+            <td class="px-4 py-2 border">{{ task.createdBy }}</td>
             <td class="px-4 py-2 border">{{ formatDate(task.CreatedAt) }}</td>
-            <td class="px-4 py-2 border">{{ formatDate(task.due_date) }}</td>
+            <td class="px-4 py-2 border">{{ formatDate(task.dueDate) }}</td>
             <td class="px-4 py-2 border text-center">
               <button
                 @click="openViewModal(task)"
@@ -56,7 +56,7 @@
                 Edit
               </button>
               <button
-                v-if="userEmail === task.created_by"
+                v-if="userEmail === task.createdBy"
                 @click="confirmDelete(task.ID)"
                 class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
               >
@@ -79,10 +79,10 @@
         <p><strong>Description:</strong> {{ viewTask.description }}</p>
         <p><strong>Status:</strong> {{ viewTask.status }}</p>
         <p><strong>Priority:</strong> {{ viewTask.priority }}</p>
-        <p><strong>Assigned To:</strong> {{ viewTask.assigned_to }}</p>
-        <p><strong>Created By:</strong> {{ viewTask.created_by }}</p>
+        <p><strong>Assigned To:</strong> {{ viewTask.assignedTo }}</p>
+        <p><strong>Created By:</strong> {{ viewTask.createdBy }}</p>
         <p><strong>Created At:</strong> {{ formatDate(viewTask.CreatedAt) }}</p>
-        <p><strong>Due Date:</strong> {{ formatDate(viewTask.due_date) }}</p>
+        <p><strong>Due Date:</strong> {{ formatDate(viewTask.dueDate) }}</p>
         <div class="flex justify-end mt-4">
           <button
             @click="closeViewModal"
@@ -148,7 +148,7 @@
           <div class="mb-4">
             <label class="block mb-2" for="assignedTo">Assigned To</label>
             <input
-              v-model="taskForm.assigned_to"
+              v-model="taskForm.assignedTo"
               type="email"
               id="assignedTo"
               class="w-full p-2 border border-gray-300 rounded"
@@ -157,7 +157,7 @@
           <div class="mb-4">
             <label class="block mb-2" for="dueDate">Due Date</label>
             <input
-              v-model="taskForm.due_date"
+              v-model="taskForm.dueDate"
               type="date"
               id="dueDate"
               class="w-full p-2 border border-gray-300 rounded"
@@ -197,9 +197,9 @@ export default {
         description: "",
         status: "Pending",
         priority: "Low",
-        assigned_to: "",
-        created_by: "",
-        due_date: "",
+        assignedTo: "",
+        createdBy: "",
+        dueDate: "",
       },
       showCreateModal: false,
       showEditModal: false,
@@ -264,8 +264,8 @@ export default {
         description: "",
         status: "Pending",
         priority: "Low",
-        assigned_to: "",
-        due_date: "",
+        assignedTo: "",
+        dueDate: "",
       };
     },
     createTask() {
@@ -275,9 +275,9 @@ export default {
         description: this.taskForm.description,
         status: this.taskForm.status,
         priority: this.taskForm.priority,
-        assigned_to: this.taskForm.assigned_to,
-        created_by: userEmail,
-        due_date: new Date(this.taskForm.due_date).toISOString(),
+        assignedTo: this.taskForm.assignedTo,
+        createdBy: userEmail,
+        dueDate: new Date(this.taskForm.dueDate).toISOString(),
       };
 
       axios
@@ -298,9 +298,9 @@ export default {
         title: this.taskForm.title,
         description: this.taskForm.description,
         status: this.taskForm.status,
-        assigned_to: this.taskForm.assigned_to,
-        created_by: this.taskForm.created_by,
-        due_date: new Date(this.taskForm.due_date).toISOString(),
+        assignedTo: this.taskForm.assignedTo,
+        createdBy: this.taskForm.createdBy,
+        dueDate: new Date(this.taskForm.dueDate).toISOString(),
       };
 
       axios
